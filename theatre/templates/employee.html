@@ -1,0 +1,131 @@
+<!-- Страница информации о сотрудниках -->
+<!-- Подключение шаблона-фундамента для страницы -->
+{% extends 'base.html' %}
+{% block title %}
+Страница сотрудников
+{% endblock %}
+<!-- Оформление информационного блока -->
+{% block content %}
+<div class="row" style="margin-top:20px; margin-left:20px">
+   <div class="col-8">
+      <h2>Список сотрудников</h2>
+      <br>
+      <!-- Формирование таблицы пользователей -->
+      <table id="data" class="table table-hover table-bordered table-info table-striped">
+         <thead>
+            <tr>
+               <th scope="col">Персональный номер сотрудника</th>
+               <th scope="col">ФИО сотрудника</th>
+               <th scope="col">День рождения сотрудника</th>
+               <th scope="col">Мобильный номер телефона</th>
+               <th scope="col">Домашний номер телефона</th>
+               <th scope="col">Адрес</th>
+               <th scope="col">Должность</th>
+            </tr>
+         </thead>
+         <tbody>
+            {% for employee in employers %}
+            <tr>
+               <td>{{ employee.personal_number }}</td>
+               <td>{{ employee.fio }}</td>
+               <td>{{ employee.birthday }}</td>
+               <td>{{ employee.mobile_number }}</td>
+               <td>{{ employee.home_phone_number }}</td>
+               <td>{{ employee.adress }}</td>
+               {% if employee.employee_position %}
+               <td>{{ employee.employee_position.position.position_name }}</td>
+               {% else %}
+               <td> Аккаунт ждёт активации! </td>
+               {% endif %}
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+   </div>
+   <div class="col-2">
+      <table class="table table-striped">
+         <tbody>
+            <tr>
+               <th>
+                  <!-- Формирование таблицы действий с сотрудниками -->
+                  <form class="form" action="{{url_for('admin.employee')}}" method="POST">
+                     {{change_form.hidden_tag()}}
+                     <p>
+                     {{change_form.position_name.label(class="form-control-label text-light")}}
+                     {{change_form.position_name(class="form-control form-control-sm")}}
+                     </p>
+                     <p>
+                     {{change_form.employee_fio.label(class="form-control-label text-light")}}
+                     {{change_form.employee_fio(class="form-control form-control-sm")}}
+                     </p>
+                     <p>{{change_form.submit_up_empl(class="btn btn-info")}}</p>
+                     <p>{{change_form.submit_del_mpl(class="btn btn-danger")}}</p>
+                  </form>
+               </th>
+               <!-- Формирование таблицы списка должностей -->
+               <div class="col-3">
+                  <h2>Список должностей</h2>
+                  <br>
+                  <table class="table table-hover table-info table-striped">
+                     <thead>
+                        <tr align="center">
+                           <th scope="col">Именование должности</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {% for position in positions %}
+                        <tr align="center">
+                           <td>{{ position.position_name }}</td>
+                        </tr>
+                        {% endfor %}
+                     </tbody>
+                  </table>
+               </div>
+            </tr>  
+         </tbody>
+      </table>
+   </div>
+</div>
+{% endblock %}
+
+<!-- Скрипт для динамической таблицы: фильтрация, сортировка-->
+{% block scripts %}
+<script>
+   $(document).ready(function () {
+      $("#data").DataTable(
+         {
+            columns: [
+               { orderable: true, searchable: true },
+               { orderable: true, searchable: true },
+               { orderable: true, searchable: true },
+               { orderable: true, searchable: true },
+               { orderable: true, searchable: true },
+               { orderable: true, searchable: true },
+               { orderable: true, searchable: true }
+            ],
+            language: {
+               "processing": "Подождите...",
+               "search": "Поиск:",
+               "lengthMenu": "Показать _MENU_ записей",
+               "info": "Записи с _START_ до _END_ из _TOTAL_ записей",
+               "infoEmpty": "Записи с 0 до 0 из 0 записей",
+               "infoFiltered": "(отфильтровано из _MAX_ записей)",
+               "infoPostFix": "",
+               "loadingRecords": "Загрузка записей...",
+               "zeroRecords": "Записи отсутствуют.",
+               "emptyTable": "В таблице отсутствуют данные",
+               "paginate": {
+                  "first": "Первая",
+                  "previous": "Предыдущая",
+                  "next": "Следующая",
+                  "last": "Последняя"
+               },
+               "aria": {
+                  "sortAscending": ": активировать для сортировки столбца по возрастанию",
+                  "sortDescending": ": активировать для сортировки столбца по убыванию"
+               }
+            }
+         });
+   });
+</script>
+{% endblock %}
